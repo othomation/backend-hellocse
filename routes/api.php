@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthenticationController;
+use App\Http\Controllers\StarController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,4 +25,8 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::controller(AuthenticationController::class)->prefix('auth')->group(function () {
     Route::post("login", 'login');
     Route::post("register", 'register');
+});
+
+Route::controller(StarController::class)->prefix('star')->group(function () {
+    Route::get("", "index");
 });

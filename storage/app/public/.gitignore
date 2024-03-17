@@ -1,2 +1,5 @@
 *
 !.gitignore
+
+# Keep our sweet default star image, for seeding purposes
+!default_star_image.jpg

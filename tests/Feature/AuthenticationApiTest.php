@@ -4,13 +4,14 @@ namespace Tests\Feature;
 
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
-use Illuminate\Http\Response;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class AuthenticationApiTest extends TestCase
 {
+    use DatabaseTransactions;
     /** @test */
     public function should_access_homepage_unauthenticated(): void
     {
@@ -72,5 +73,40 @@ class AuthenticationApiTest extends TestCase
         $response->assertJson([
             "message" => "Invalid Credentials"
         ]);
+    }
+
+    /** @test */
+    public function should_be_able_to_register()
+    {
+        $response = $this->post('/api/auth/register', [
+            "name" => "Bumpy",
+            "email" => "bumpy@professional.com",
+            "password" => "super_complicated_password"
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJsonStructure(['id', 'name', 'email', 'created_at', 'updated_at']);
+        $response->assertJson([
+            "name" => "Bumpy",
+            "email" => "bumpy@professional.com",
+        ]);
+    }
+
+    /** @test */
+    public function should_not_be_able_to_register_with_already_existant_email()
+    {
+        $this->post('/api/auth/register', [
+            "name" => "Bumpy",
+            "email" => "bumpy@professional.com",
+            "password" => "super_complicated_password"
+        ]);
+
+        $response = $this->post('/api/auth/register', [
+            "name" => "Bumpy",
+            "email" => "bumpy@professional.com",
+            "password" => "super_complicated_password"
+        ]);
+
+        $response->assertStatus(422);
     }
 }

@@ -23,4 +23,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::controller(AuthenticationController::class)->prefix('auth')->group(function () {
     Route::post("login", 'login');
+    Route::post("register", 'register');
 });

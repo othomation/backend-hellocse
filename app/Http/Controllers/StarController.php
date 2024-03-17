@@ -60,4 +60,26 @@ class StarController extends Controller
     {
         return Star::where('id', $id)->delete();
     }
+
+    public function update(Request $request, int $id)
+    {
+        $validator = Validator::make($request->all(), $this->storeUpdateStarValidationsRules());
+
+        $failure = $this->handleValidatorFailure($validator);
+        if ($failure instanceof JsonResponse) return $failure;
+
+        $imagePath = null;
+
+        $data = [...$request->only('firstname', 'lastname', 'description')];
+        if (!is_null($request->file('image'))) {
+            $imagePath = $request->file('image')->store('public');
+            $data['image'] = $imagePath;
+        }
+
+        $star = Star::where('id', $id)->first();
+        $star->update($data);
+        $star = $star->refresh();
+
+        return response()->json($star, Response::HTTP_OK);
+    }
 }

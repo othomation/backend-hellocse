@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('star', [StarController::class, 'store']);
     Route::delete('star/{id}', [StarController::class, 'delete']);
+    Route::put('star/{id}', [StarController::class, 'update']);
 });
 
 Route::controller(AuthenticationController::class)->prefix('auth')->group(function () {

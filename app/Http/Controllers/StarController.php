@@ -49,4 +49,9 @@ class StarController extends Controller
             Response::HTTP_CREATED
         );
     }
+
+    public function show(int $id)
+    {
+        return Star::where('id', $id)->get();
+    }
 }

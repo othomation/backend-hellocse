@@ -32,4 +32,5 @@ Route::controller(AuthenticationController::class)->prefix('auth')->group(functi
 
 Route::controller(StarController::class)->prefix('star')->group(function () {
     Route::get("", "index");
+    Route::get("{id}", "show");
 });

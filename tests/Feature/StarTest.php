@@ -4,6 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\Star;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use App\Models\User;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\UploadedFile;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class StarTest extends TestCase
@@ -37,4 +41,49 @@ class StarTest extends TestCase
         $responsePage3->assertJsonCount(10, "data");
     }
 
+    /** @test */
+    public function should_not_be_able_to_create_a_star_unauthenticated(): void
+    {
+        /** Payload is not even necessary since it should fail auth first! */
+        $response = $this->post('/api/star', []);
+
+        $response->assertStatus(401);
+    }
+
+    /** @test */
+    public function should_be_able_to_create_a_star_authenticated_with_good_payload(): void
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        $payload = [
+            "firstname" => "Morgan",
+            "lastname" => "Freeman",
+            "description" => ["C'est une star", "Peut être ?"],
+            "image" => UploadedFile::fake()->image('testImage.jpg')
+        ];
+
+        $response = $this->post('/api/star', $payload);
+
+        $response->assertStatus(201);
+        $response->assertJsonStructure(["id", "firstname", "lastname", "description", "image", "id", "created_at"]);
+    }
+
+    /** @test */
+    public function should_not_be_able_to_create_a_star_autenticated_with_bad_payload(): void
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        $payload = [
+            "firstname" => "Morgan",
+            "lastname" => "Freeman",
+            "description" => ["C'est une star", "Peut être ?"],
+            // Missing Image !
+        ];
+
+        $response = $this->post('/api/star', $payload);
+
+        $response->assertStatus(422);
+    }
 }

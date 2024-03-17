@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Traits\Validation\HandleValidatorFailure;
 use App\Traits\Validation\Star\StoreStarValidationRules;
 use Illuminate\Http\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class StarController extends Controller
 {
@@ -53,5 +54,10 @@ class StarController extends Controller
     public function show(int $id)
     {
         return Star::where('id', $id)->get();
+    }
+
+    public function delete(int $id)
+    {
+        return Star::where('id', $id)->delete();
     }
 }

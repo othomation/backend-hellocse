@@ -2,7 +2,10 @@
 
 namespace App\Exceptions;
 
+use App\Providers\RouteServiceProvider;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -44,5 +47,17 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        // Add additional check by 'api' prefix to ensure we always send json
+        // It will only trigger if we are handled by a auth middleware
+        if ($request->expectsJson() || $request->route()->getPrefix() === 'api') {
+            return response()->json(['message' => $exception->getMessage()], Response::HTTP_UNAUTHORIZED);
+        }
+
+        // Otherwise, just redirect the user to the homepage
+        return redirect(RouteServiceProvider::HOME);
     }
 }

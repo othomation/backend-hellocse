@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\StarController;
+use App\Http\Requests\StoreStarRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,7 +20,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', function (Request $request) {
         return $request->user();
-    });    
+    });
+
+    Route::post('star', [StarController::class, 'store']);
 });
 
 Route::controller(AuthenticationController::class)->prefix('auth')->group(function () {

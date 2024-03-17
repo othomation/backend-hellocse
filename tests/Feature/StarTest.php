@@ -68,4 +68,22 @@ class StarTest extends TestCase
         $response->assertStatus(201);
         $response->assertJsonStructure(["id", "firstname", "lastname", "description", "image", "id", "created_at"]);
     }
+
+    /** @test */
+    public function should_not_be_able_to_create_a_star_autenticated_with_bad_payload(): void
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        $payload = [
+            "firstname" => "Morgan",
+            "lastname" => "Freeman",
+            "description" => ["C'est une star", "Peut être ?"],
+            // Missing Image !
+        ];
+
+        $response = $this->post('/api/star', $payload);
+
+        $response->assertStatus(422);
+    }
 }

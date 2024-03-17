@@ -39,7 +39,13 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            /** 
+             * Activate this sanctum middleware since it will help to authenticate SPA app
+             * Apps that does not have access to sessions
+             * 
+             * See documentation: https://laravel.com/docs/10.x/sanctum#sanctum-middleware
+             */
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
